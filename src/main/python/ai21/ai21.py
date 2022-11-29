@@ -1,8 +1,8 @@
 """Utilities to interact with AI21 Large Language Model APIs"""
 
 import requests
-import llm_prompts
-from config import AI21_API_KEY_PATH
+from ai21 import llm_prompts
+AI21_API_KEY_PATH='~/creds/.ai21'
 from typing import List, Dict
 
 
@@ -100,7 +100,7 @@ def get_penalty(scale: float = 0.0, numbers: bool = None, punctuation: bool = No
 DEFAULT_PENALTY = get_penalty()
 
 
-def get_authorization_string(api_key_path: str = AI21_API_KEY_PATH) -> str:
+def get_authorization_string(api_key_path) -> str:
     """
     Obtain the AI21 authorization string.
     @param api_key_path: The path to a local file containing a AI21_API_KEY environment variable. Your API key can be
