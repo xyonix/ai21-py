@@ -69,5 +69,6 @@ middle of a token.
 # api = 'rewrite'
 
 `text`: text to rewrite
+
 `intent`: style of rewrite. Supported types are 'general', 'long', 'short', 'formal', 'casual'
 
