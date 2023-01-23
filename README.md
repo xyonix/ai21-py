@@ -7,7 +7,7 @@ There are multiple AI21 APIs that are currently supported. You will generally us
 function to hit the AI21 API of choice, then you can obtain the results with the convenience function 
 `get_response_text`. Here are more details on the _**kwargs_ parameter of the `api_request` function. 
 The default parameter values for each of these APIs can be found by calling the `get_api_params` function 
-with the api you wish to hit, e.g., 
+with the API you wish to hit, e.g., 
 
 ```python
 get_api_params(api='complete')
