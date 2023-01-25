@@ -57,8 +57,6 @@ new line use [".", "\n"]. The decoded result text will not include the stop sequ
 included in the raw token data, which can also continue beyond the stop sequence if the sequence ended in the
 middle of a token.
 
-`model_type`: type of model. Choices are 'summarization', 'completion'.
-
 `model`: AI21 large language model to use. Choices are 'j1-large', 'j1-grande', 'j1-jumbo'.
 
 
