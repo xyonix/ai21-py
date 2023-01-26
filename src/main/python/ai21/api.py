@@ -130,19 +130,19 @@ def get_api_url(api: str = 'complete', model: str = 'j1-large', custom_model: Un
     """
     api = api.lower()
     model = model.lower()
-    if custom_model is not None:
-        model += f"/{custom_model}"
+    if model not in SUPPORTED_MODELS:
+        raise ValueError('Unsupported large language model "%s". Must be one of %s' % (model, SUPPORTED_MODELS))
     version = version.lower()
 
     api_base_url = f'https://api.ai21.com/studio/{version}'
 
-    if model not in SUPPORTED_MODELS:
-        raise ValueError('Unsupported large language model. Must be one of %s' % SUPPORTED_MODELS)
-
     if api == 'summarize':
         url = f'{api_base_url}/experimental/summarize'
     elif api == 'complete':
-        url = f'{api_base_url}/{model}/complete'
+        if custom_model is not None:
+            url = f'{api_base_url}/{model}/{custom_model}/complete'
+        else:
+            url = f'{api_base_url}/{model}/complete'
     elif api == 'rewrite':
         url = f'{api_base_url}/experimental/rewrite'
     else:
@@ -152,9 +152,10 @@ def get_api_url(api: str = 'complete', model: str = 'j1-large', custom_model: Un
 
 
 def api_request(api: str = 'complete', model: str = 'j1-large', custom_model: Union[None, str] = None,
-                api_key_path: str = AI21_API_KEY_PATH, **kwargs) -> Tuple[requests.models.Response, Dict]:
+                api_key_path: str = AI21_API_KEY_PATH, version='v1', **kwargs) -> Tuple[requests.models.Response, Dict]:
     """
     Post JSON to a REST API endpoint for AI21's Jurassic-1 (J1) NLP large language models.
+    @param version: AI21 Jurassic model version.
     @param api: AI21 API. Choices are 'complete', 'summary', 'rewrite'.
     @param model: AI21 large language model to use. Choices are 'j1-large', 'j1-grande', 'j1-jumbo'.
     @param custom_model: name of the custom model to use.
@@ -163,10 +164,14 @@ def api_request(api: str = 'complete', model: str = 'j1-large', custom_model: Un
     @param kwargs Additional parameters used in the API call, which overwrite the defaults.
     """
     params = get_api_params(api, **kwargs)
-    response = requests.post(get_api_url(api=api, model=model, custom_model=custom_model),
-                             headers=get_authorization(api_key_path),
-                             json=params)
-
+    try:
+        response = requests.post(get_api_url(api=api, model=model, custom_model=custom_model, version=version),
+                                 headers=get_authorization(api_key_path),
+                                 json=params)
+        response.raise_for_status()
+    except requests.exceptions.HTTPError as error:
+        print(response.content)
+        raise ValueError(error)
     return response, params
 
 
@@ -240,6 +245,7 @@ def get_response_text(response: requests.models.Response, simplify: bool = True)
     @return: The completion of returned by the J1 large language model.
     """
     data = response.json()
+    print(f'get_response_text::data: {data}')
     api = get_response_api(response)
     if api == 'complete':
         result = [s['data']['text'].strip() for s in data['completions']]
