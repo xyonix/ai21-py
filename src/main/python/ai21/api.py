@@ -245,7 +245,6 @@ def get_response_text(response: requests.models.Response, simplify: bool = True)
     @return: The completion of returned by the J1 large language model.
     """
     data = response.json()
-    print(f'get_response_text::data: {data}')
     api = get_response_api(response)
     if api == 'complete':
         result = [s['data']['text'].strip() for s in data['completions']]
