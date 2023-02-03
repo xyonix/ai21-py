@@ -13,6 +13,13 @@ AI21_PARAM_LIMITS = {
     'TOP_PERCENTILE': (0, 1),
 }
 
+# The number of tokens that can be used in a prompt for LLM completion
+# is limited, typically 2048 tokens. Each token represents a word or a
+# subword and, on average, represents 6 characters. When we form prompts
+# we have to be careful not to exceed 2048 tokens, which is approximately
+# 2048*6 characters.
+TEXT_LENGTH_MAX_ESTIMATE = int(AI21_PARAM_LIMITS['MAX_TOKENS'][1] * 6)
+
 SUPPORTED_MODELS = ['j1-large', 'j1-grande', 'j1-jumbo']
 SUPPORTED_API = ['summarize', 'complete', 'rewrite']
 SUPPORTED_REWRITE_INTENT = ['general', 'long', 'short', 'formal', 'casual']
